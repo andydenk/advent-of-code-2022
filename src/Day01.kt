@@ -9,12 +9,12 @@ fun main() {
     println("Part 2: ${part2(input)}")
 }
 
-fun part1(input: List<String>): Int {
+private fun part1(input: List<String>): Int {
     return calculateElvInventories(input)
         .maxOf { it.totalCalories() }
 }
 
-fun part2(input: List<String>): Int {
+private fun part2(input: List<String>): Int {
     return calculateElvInventories(input)
         .map { it.totalCalories() }
         .sortedDescending()
@@ -22,7 +22,7 @@ fun part2(input: List<String>): Int {
         .sum()
 }
 
-fun calculateElvInventories(input: List<String>): MutableList<Elv> {
+private fun calculateElvInventories(input: List<String>): MutableList<Elv> {
     val elves = mutableListOf<Elv>()
     var currentElv = Elv()
 

@@ -44,9 +44,9 @@ private fun calculateElvInventories(input: List<String>): MutableList<Elv> {
     return elves
 }
 
-typealias CalorieItem = Int
+private typealias CalorieItem = Int
 
-data class Elv(val calorieItems: MutableList<CalorieItem> = emptyList<CalorieItem>().toMutableList()) {
+private data class Elv(val calorieItems: MutableList<CalorieItem> = emptyList<CalorieItem>().toMutableList()) {
     operator fun plusAssign(calorieItem: CalorieItem) {
         calorieItems.add(calorieItem)
     }

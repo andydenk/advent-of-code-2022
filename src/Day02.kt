@@ -24,7 +24,7 @@ private fun part2(input: List<String>): Int {
         .sumOf { it.protagonistTotalScore() }
 }
 
-fun findNeededShape(opponentShape: Shape, outcomeNeeded: Outcome): Shape {
+private fun findNeededShape(opponentShape: Shape, outcomeNeeded: Outcome): Shape {
     return when (outcomeNeeded) {
         Outcome.WIN -> opponentShape.beatenBy()
         Outcome.DRAW -> opponentShape
@@ -32,7 +32,7 @@ fun findNeededShape(opponentShape: Shape, outcomeNeeded: Outcome): Shape {
     }
 }
 
-fun shapeFor(input: String) = when (input) {
+private fun shapeFor(input: String) = when (input) {
     "A", "X" -> Rock
     "B", "Y" -> Paper
     "C", "Z" -> Scissors
@@ -57,13 +57,13 @@ private fun shapeAndOutcome(input: String): Pair<Shape, Outcome> {
     return shapeFor(choices[0]) to Outcome.forInput(choices[1])
 }
 
-class Round(private val opponent: Shape, private val protagonist: Shape) {
+private class Round(private val opponent: Shape, private val protagonist: Shape) {
     fun protagonistTotalScore(): Int {
         return protagonist.scoreAgainst(opponent) + protagonist.baseScore
     }
 }
 
-sealed class Shape(val baseScore: Int) {
+private sealed class Shape(val baseScore: Int) {
     abstract fun beats(): Shape
     abstract fun beatenBy(): Shape
 
@@ -78,25 +78,25 @@ sealed class Shape(val baseScore: Int) {
     }
 }
 
-object Rock : Shape(1) {
+private object Rock : Shape(1) {
     override fun beats(): Shape = Scissors
 
     override fun beatenBy(): Shape = Paper
 }
 
-object Paper : Shape(2) {
+private object Paper : Shape(2) {
     override fun beats(): Shape = Rock
 
     override fun beatenBy(): Shape = Scissors
 }
 
-object Scissors : Shape(3) {
+private object Scissors : Shape(3) {
     override fun beats(): Shape = Paper
 
     override fun beatenBy(): Shape = Rock
 }
 
-enum class Outcome(val score: Int) {
+private enum class Outcome(val score: Int) {
     WIN(6),
     DRAW(3),
     LOSS(0);

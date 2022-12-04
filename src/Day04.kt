@@ -12,23 +12,21 @@ fun main() {
 private fun part1(input: List<String>): Int {
     return input
         .map { it.toRangePair() }
-        .filter { (first, second) -> first.fullyContains(second) || second.fullyContains(first) }
-        .size
+        .count { (first, second) -> first in second || second in first }
 }
 
 private fun part2(input: List<String>): Int {
     return input
         .map { it.toRangePair() }
-        .filter { (first, second) -> first.intersects(second) || second.intersects(first) }
-        .size
+        .count { (first, second) -> first.intersects(second) || second.intersects(first) }
 }
 
-private fun Iterable<Int>.fullyContains(otherRange: Iterable<Int>): Boolean {
+private operator fun IntRange.contains(otherRange: IntRange): Boolean {
     return first() <= otherRange.first() && last() >= otherRange.last()
 }
 
 private fun IntRange.intersects(otherRange: IntRange): Boolean {
-    return contains(otherRange.first()) || contains(otherRange.last())
+    return first() <= otherRange.last && otherRange.first <= last
 }
 
 private fun String.toRangePair(): Pair<IntRange, IntRange> {

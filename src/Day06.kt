@@ -18,23 +18,12 @@ fun main() {
     println("Part 2: ${part2(input)}")
 }
 
-private fun part1(input: String): Int = signalDetected(input, 4)
+private fun part1(input: String): Int = detectSignal(input, 4)
 
-private fun part2(input: String): Int = signalDetected(input, 14)
+private fun part2(input: String): Int = detectSignal(input, 14)
 
-private fun signalDetected(input: String, uniqueCharacters: Int): Int {
-    val signals = emptyList<Char>().toMutableList()
-
-    input.forEachIndexed { index, char ->
-        signals.add(char)
-
-        if (index >= uniqueCharacters) {
-            signals.removeAt(0)
-        }
-
-        if (signals.toSet().size == uniqueCharacters) {
-            return index + 1
-        }
-    }
-    return input.length
+private fun detectSignal(input: String, uniqueCharacters: Int): Int {
+    return input
+        .windowedSequence(uniqueCharacters)
+        .indexOfFirst { it.toSet().size == uniqueCharacters } + uniqueCharacters
 }

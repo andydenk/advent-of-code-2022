@@ -40,14 +40,14 @@ private fun applyPart2Instruction(instruction: Instruction, stacks: Map<Int, Sta
         .forEach { destinationStack.addFirst(it) }
 }
 
-fun parseInput(input: List<String>): Pair<Map<Int, Stack>, List<Instruction>> {
+private fun parseInput(input: List<String>): Pair<Map<Int, Stack>, List<Instruction>> {
     val stacks = parseStacks(input.subList(0, input.indexOf("") - 1))
     val instructions = input.subList(input.indexOf("") + 1, input.size).map { Instruction.of(it) }
 
     return stacks to instructions
 }
 
-fun parseStacks(stacksInput: List<String>): Map<Int, Stack> {
+private fun parseStacks(stacksInput: List<String>): Map<Int, Stack> {
     val numberOfStacks = stacksInput.last().split(" ").size
     val stacksMap = (1..numberOfStacks).associateBy({ it }, { Stack() })
 
@@ -64,11 +64,11 @@ fun parseStacks(stacksInput: List<String>): Map<Int, Stack> {
 private fun printResult(stacks: Map<Int, Stack>) =
     stacks.entries.sortedBy { it.key }.map { it.value.first() }.joinToString("") { it.toString() }
 
-typealias Crate = Char
+private typealias Crate = Char
 
-typealias Stack = ArrayDeque<Crate>
+private typealias Stack = ArrayDeque<Crate>
 
-data class Instruction(val origin: Int, val destination: Int, val amount: Int) {
+private data class Instruction(val origin: Int, val destination: Int, val amount: Int) {
 
     companion object {
         fun of(line: String): Instruction {

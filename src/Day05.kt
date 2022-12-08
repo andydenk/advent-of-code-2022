@@ -1,5 +1,3 @@
-import java.util.Stack
-
 fun main() {
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day05_test")
@@ -12,70 +10,71 @@ fun main() {
 }
 
 private fun part1(input: List<String>): String {
-    val (stacks: Map<Int, CrateStack>, instructions: List<Instruction>) = parseInput(input)
+    val (stacks: Map<Int, Stack>, instructions: List<Instruction>) = parseInput(input)
 
-    instructions.forEach { handlePart1Instruction(it, stacks) }
+    instructions.forEach { applyPart1Instruction(it, stacks) }
     return printResult(stacks)
 }
 
 private fun part2(input: List<String>): String {
-    val (stacks: Map<Int, CrateStack>, instructions: List<Instruction>) = parseInput(input)
+    val (stacks: Map<Int, Stack>, instructions: List<Instruction>) = parseInput(input)
 
-    instructions.forEach { handlePart2Instruction(it, stacks) }
+    instructions.forEach { applyPart2Instruction(it, stacks) }
     return printResult(stacks)
 }
 
-private fun handlePart1Instruction(it: Instruction, inputStacks: Map<Int, CrateStack>) {
-    val originStack = inputStacks.getValue(it.origin)
-    val destinationStack = inputStacks.getValue(it.destination)
+private fun applyPart1Instruction(instruction: Instruction, stacks: Map<Int, Stack>) {
+    val originStack = stacks.getValue(instruction.origin)
+    val destinationStack = stacks.getValue(instruction.destination)
 
-    (1..it.amount).forEach { _ -> destinationStack.push(originStack.pop()) }
+    repeat(instruction.amount) { destinationStack.addFirst(originStack.removeFirst()) }
 }
 
-private fun handlePart2Instruction(it: Instruction, inputStacks: Map<Int, CrateStack>) {
-    val originStack = inputStacks.getValue(it.origin)
-    val destinationStack = inputStacks.getValue(it.destination)
+private fun applyPart2Instruction(instruction: Instruction, stacks: Map<Int, Stack>) {
+    val originStack = stacks.getValue(instruction.origin)
+    val destinationStack = stacks.getValue(instruction.destination)
 
-    (1..it.amount)
-        .map { originStack.pop() }
+    (1..instruction.amount)
+        .map { originStack.removeFirst() }
         .reversed()
-        .forEach { destinationStack.push(it) }
+        .forEach { destinationStack.addFirst(it) }
 }
 
-fun parseInput(input: List<String>): Pair<Map<Int, CrateStack>, List<Instruction>> {
+fun parseInput(input: List<String>): Pair<Map<Int, Stack>, List<Instruction>> {
     val stacks = parseStacks(input.subList(0, input.indexOf("") - 1))
-    val instructions = parseInstructions(input.subList(input.indexOf("") + 1, input.size))
+    val instructions = input.subList(input.indexOf("") + 1, input.size).map { Instruction.of(it) }
 
     return stacks to instructions
 }
 
-fun parseStacks(stacksInput: List<String>): Map<Int, CrateStack> {
-    val numberOfStacks = stacksInput[stacksInput.size - 1].split(" ").size
-    val stacksMap = (1..numberOfStacks).associateBy({ it }, { CrateStack() })
+fun parseStacks(stacksInput: List<String>): Map<Int, Stack> {
+    val numberOfStacks = stacksInput.last().split(" ").size
+    val stacksMap = (1..numberOfStacks).associateBy({ it }, { Stack() })
 
     stacksInput.map { line ->
         line.chunked(4)
             .forEachIndexed { index, item ->
-                item[1].takeIf { item.isNotBlank() }?.let { stacksMap[index + 1]!!.add(0, it) }
+                item[1].takeIf { item.isNotBlank() }?.let { stacksMap.getValue(index + 1).addLast(it) }
             }
     }
 
     return stacksMap
 }
 
-fun parseInstructions(instructionsInput: List<String>): List<Instruction> {
-    return instructionsInput
-        .map { it.split("move ", " from ", " to ") }
-        .map { Instruction(origin = it[2].toInt(), destination = it[3].toInt(), amount = it[1].toInt()) }
-}
-
-private fun printResult(stacks: Map<Int, CrateStack>) =
-    stacks.entries.sortedBy { it.key }.map { it.value.peek() }.joinToString("") { it.toString() }
+private fun printResult(stacks: Map<Int, Stack>) =
+    stacks.entries.sortedBy { it.key }.map { it.value.first() }.joinToString("") { it.toString() }
 
 typealias Crate = Char
 
-typealias CrateStack = Stack<Crate>
+typealias Stack = ArrayDeque<Crate>
 
-//data class CrateStack(val index: Int, val crates: Stack<Crate> = Stack())
+data class Instruction(val origin: Int, val destination: Int, val amount: Int) {
 
-data class Instruction(val origin: Int, val destination: Int, val amount: Int)
+    companion object {
+        fun of(line: String): Instruction {
+            return line
+                .split("move ", " from ", " to ")
+                .let { Instruction(origin = it[2].toInt(), destination = it[3].toInt(), amount = it[1].toInt()) }
+        }
+    }
+}
